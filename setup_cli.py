@@ -63,23 +63,23 @@ def set_config():
     if choise == 1:
         """No config file"""
         print("Specify Kubeflow endpoint (if empty uses http://localhost:8080 by default)")
-        kep = input()
+        kep = input().strip()
         if kep == "":
             kep = "http://localhost:8080"
         print("Specify Kubeflow username (if empty uses user@example.com by default)")
-        kun = input()
+        kun = input().strip()
         if kun == "":
             kun = "user@example.com"
         print("Specify Kubeflow password (if empty uses 12341234 by default)")
-        kpw = input()
+        kpw = input().strip()
         if kpw == "":
             kpw = "12341234"
         print("Add remote cluster private key")
-        remote_key = input()
+        remote_key = input().strip()
         print("Specify remote cluster IP")
-        remote_ip = input()
+        remote_ip = input().strip()
         print("Add remote cluster username")
-        remote_username = input()
+        remote_username = input().strip()
         config = {
             'KUBEFLOW_ENDPOINT': kep,
             'KUBEFLOW_USERNAME': kun,
@@ -94,7 +94,11 @@ def set_config():
     with open("config.yaml", "r") as yamlfile:
             data = yaml.load(yamlfile, Loader=yaml.FullLoader)
             print("Read successful")
-            print(data)
+    print(data)
+
+    for key, value in data.items():
+        subprocess.run(f'gh secret set {key} --body {value} --org Softala-MLOPS', shell=True)
+
 
 def push_repo():
     """Push the repository to GitHub."""
@@ -104,19 +108,19 @@ def push_repo():
 
 def main():
 
-    """ print("Checking if GitHub CLI is installed...")
+    print("Checking if GitHub CLI is installed...")
     check_gh_installed()
 
     print("Creating a new repository...")
     create_repo()
 
     print("Creating the repository structure...")
-    create_repo_structure() """
+    create_repo_structure()
     
     set_config()
 
-    """ print("Pushing the repository to GitHub...")
-    push_repo() """
+    print("Pushing the repository to GitHub...")
+    push_repo()
 
 
 
