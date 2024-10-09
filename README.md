@@ -1,7 +1,7 @@
 # ConfigRepo
 This is the configuration repo
 
-setup_cli.py config file example:
+setup_cli.py config.yaml file example:
 ```plaintext 
     KUBEFLOW_ENDPOINT: http://localhost:8080
     KUBEFLOW_USERNAME: user@example.com
