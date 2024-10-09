@@ -3,6 +3,7 @@ import typer
 import subprocess
 import sys
 import shutil
+import yaml
 
 def check_gh_installed():
     """Check if GitHub CLI is installed."""
@@ -61,7 +62,6 @@ def set_config():
 
     if choise == 1:
         """No config file"""
-        file = open(".config", "w")
         print("Specify Kubeflow endpoint (if empty uses http://localhost:8080 by default)")
         kep = input()
         if kep == "":
@@ -80,28 +80,21 @@ def set_config():
         remote_ip = input()
         print("Add remote cluster username")
         remote_username = input()
-        file.write(f'KUBEFLOW_ENDPOINT={kep}\n')
-        file.write(f'KUBEFLOW_USERNAME={kun}\n')
-        file.write(f'KUBEFLOW_PASSWORD={kpw}\n')
-        file.write(f'REMOTE_CSC_CLUSTER_SSH_PRIVATE_KEY={remote_key}\n')
-        file.write(f'REMOTE_CSC_CLUSTER_SSH_IP={remote_ip}\n')
-        file.write(f'REMOTE_CSC_CLUSTER_SSH_USERNAME={remote_username}\n')
-        file.close()
-        subprocess.run(f'gh secret set KUBEFLOW_ENDPOINT --body {kep}', shell=True)
-        subprocess.run(f'gh secret set KUBEFLOW_USERNAME --body {kun}', shell=True)
-        subprocess.run(f'gh secret set KUBEFLOW_PASSWORD --body {kpw}', shell=True)
-        subprocess.run(f'gh secret set REMOTE_CSC_CLUSTER_SSH_PRIVATE_KEY --body {remote_key}', shell=True)
-        subprocess.run(f'gh secret set REMOTE_CSC_CLUSTER_SSH_IP --body {remote_ip}', shell=True)
-        subprocess.run(f'gh secret set REMOTE_CSC_CLUSTER_SSH_USERNAME --body {remote_username}', shell=True)
-    elif choise == 2:
-        """Already a config file"""
-        print('Enter path to config file:')
-        fpath = input()
-        split_file = open(fpath, "r").read().split('\n')
-        for i, split_pair in enumerate(split_file):
-            split_pair = split_file[i].split(' = ')
-            subprocess.run(f'gh secret set {split_pair[0]} --body {split_pair[0]}', shell=True)
-        shutil.copyfile(fpath, "./.config")
+        config = {
+            'KUBEFLOW_ENDPOINT': kep,
+            'KUBEFLOW_USERNAME': kun,
+            'KUBEFLOW_PASSWORD': kpw,
+            'REMOTE_CSC_CLUSTER_SSH_PRIVATE_KEY': remote_key,
+            'REMOTE_CSC_CLUSTER_SSH_IP': remote_ip,
+            'REMOTE_CSC_CLUSTER_SSH_USERNAME': remote_username
+        }
+        with open("config.yaml", 'w',) as f :
+            yaml.dump(config, f, sort_keys=False)
+            
+    with open("config.yaml", "r") as yamlfile:
+            data = yaml.load(yamlfile, Loader=yaml.FullLoader)
+            print("Read successful")
+            print(data)
 
 def push_repo():
     """Push the repository to GitHub."""
@@ -111,19 +104,19 @@ def push_repo():
 
 def main():
 
-    print("Checking if GitHub CLI is installed...")
+    """ print("Checking if GitHub CLI is installed...")
     check_gh_installed()
 
     print("Creating a new repository...")
     create_repo()
 
     print("Creating the repository structure...")
-    create_repo_structure()
+    create_repo_structure() """
     
     set_config()
 
-    print("Pushing the repository to GitHub...")
-    push_repo()
+    """ print("Pushing the repository to GitHub...")
+    push_repo() """
 
 
 
