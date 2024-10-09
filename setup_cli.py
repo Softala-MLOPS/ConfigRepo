@@ -57,7 +57,7 @@ def create_repo_structure():
 def set_config():
     """Create a config file for github secrets"""
 
-    print("1 Create config file\n2 Specify file path to an existing config file")
+    print("1 Create config file\n2 Already a config.yaml file in directory")
     choise = int(input())
 
     if choise == 1:
