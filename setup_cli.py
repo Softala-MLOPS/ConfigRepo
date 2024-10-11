@@ -3,7 +3,6 @@ import typer
 import subprocess
 import sys
 import shutil
-import yaml
 
 def check_gh_installed():
     """Check if GitHub CLI is installed."""
@@ -106,6 +105,21 @@ def push_repo():
     subprocess.run([f"git", 'commit', '-m', '"Initial commit"'])
     subprocess.run([f"git", 'push', 'origin', 'main'])
 
+def create_branches():
+    # Create branches for development
+    subprocess.run(f'git checkout -b development', shell=True)
+    subprocess.run(f'git push origin development', shell=True)
+    
+    subprocess.run(f'git checkout -b staging', shell=True)
+    subprocess.run(f'git push origin staging', shell=True)
+    
+    subprocess.run(f'git checkout -b production', shell=True)
+    subprocess.run(f'git push origin production', shell=True)
+    
+    print("Branches created successfully")
+    print("List of current branches:")
+    subprocess.run(f'git branch -a', shell=True, capture_output=True)
+
 def main():
 
     print("Checking if GitHub CLI is installed...")
@@ -121,6 +135,9 @@ def main():
 
     print("Pushing the repository to GitHub...")
     push_repo()
+
+    print("Creating branches...")
+    create_branches()
 
 
 
