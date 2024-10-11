@@ -3,6 +3,7 @@ import typer
 import subprocess
 import sys
 import shutil
+import yaml
 
 def check_gh_installed():
     """Check if GitHub CLI is installed."""
