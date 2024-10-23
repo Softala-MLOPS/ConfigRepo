@@ -11,6 +11,23 @@ def check_gh_installed():
         result = subprocess.run(["gh", "--version"], capture_output=True, text=True)
         if result.returncode != 0:
             typer.echo("GitHub CLI (gh) is not installed.")
+            typer.echo("Do you want to install GitHub CLI? (y/n)")
+            choice = input().strip().lower()
+            if choice == 'y':
+                if sys.platform == "darwin":
+                    typer.echo("Installing GitHub CLI on macOS using Homebrew...")
+                    subprocess.run(["brew", "install", "gh"], check=True)
+                elif sys.platform == "linux":
+                    typer.echo("Installing GitHub CLI on Linux using apt...")
+                    subprocess.run(["sudo", "apt", "update"], check=True)
+                    subprocess.run(["sudo", "apt", "install", "-y", "gh"], check=True)
+                else:
+                    typer.echo("Unsupported OS. Please install GitHub CLI manually.")
+                    sys.exit(1)
+            else:
+                typer.echo("GitHub CLI (gh) is required. Exiting...")
+                sys.exit(1)
+
             sys.exit(1)
     except FileNotFoundError:
         typer.echo("GitHub CLI (gh) is not installed.")
@@ -20,8 +37,8 @@ def create_repo():
     result = subprocess.run("gh auth status", shell=True, capture_output=True, text=True)
     if "Logged in to github.com account" not in result.stdout:
         subprocess.run("gh auth login", shell=True)
-    subprocess.run('gh repo create Softala-MLOPS/configRepoCLI --public --description "Upstream repository" --clone', shell=True)
-    os.chdir("configRepoCLI")
+    subprocess.run('gh repo create Softala-MLOPS/configRepoCLI2 --public --description "Upstream repository" --clone', shell=True)
+    os.chdir("configRepoCLI2")
 
 def create_repo_structure():
     """Create the repository structure."""
@@ -40,6 +57,9 @@ def create_repo_structure():
     subprocess.run(f"mkdir -p notebook", shell=True, capture_output=True)
     os.chdir("notebook")
     subprocess.run(f'echo "notebook" > Readme.md', shell=True, capture_output=True)
+
+    # Download demo pipeline notebook to be changed in the future
+    subprocess.run(f'curl -O https://raw.githubusercontent.com/OSS-MLOPS-PLATFORM/oss-mlops-platform/main/tutorials/demo_notebooks/demo_pipeline/demo-pipeline.ipynb', shell=True, capture_output=True) 
     os.chdir("../")
     subprocess.run(f"mkdir -p src", shell=True, capture_output=True)
     os.chdir("src")
@@ -109,13 +129,13 @@ def push_repo():
 def create_branches():
     # Create branches for development
     subprocess.run(f'git checkout -b development', shell=True)
-    subprocess.run(f'git push origin development', shell=True)
+    subprocess.run(f'git push --set-upstream origin development', shell=True)
     
     subprocess.run(f'git checkout -b staging', shell=True)
-    subprocess.run(f'git push origin staging', shell=True)
+    subprocess.run(f'git push --set-upstream origin staging', shell=True)
     
     subprocess.run(f'git checkout -b production', shell=True)
-    subprocess.run(f'git push origin production', shell=True)
+    subprocess.run(f'git push --set-upstream origin production', shell=True)
     
     print("Branches created successfully")
     print("List of current branches:")
