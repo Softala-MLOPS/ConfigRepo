@@ -7,7 +7,7 @@ repo_name = "ConfigRepoCLI"
 def get_repo_owner():
 
     result = subprocess.run(
-        f"gh api -X GET search/repositories -f q='{repo_name} in:name' --jq '.items[] | {{name, owner: .owner.login}}'",
+        f"gh api -X GET search/repositories -f q='{repo_name} in:name' --jq '.items[0] | {{name, owner: .owner.login}}'",
         shell=True,
         capture_output=True,
         text=True
@@ -27,8 +27,12 @@ def get_repo_owner():
 
 def fork_repo(owner):
     # Run the gh command to fork the repo
-    subprocess.run(f'gh repo fork {owner}/{repo_name} --clone --fork-name "working-repo"', shell=True)
-    print("Repository forked successfully") 
+    try:   
+        subprocess.run(f'gh repo fork {owner}/{repo_name} --clone --fork-name "working-repo"', shell=True)
+    except:
+        print("Failed to fork repository")
+    else:
+        print("Repository forked successfully")
 
 
 def main():
